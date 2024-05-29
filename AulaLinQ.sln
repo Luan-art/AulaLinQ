@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AulaLinQ", "AulaLinQ\AulaLinQ.csproj", "{747FCAFF-0366-4841-A431-32A457162C2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjAula1B", "ProjAula1B\ProjAula1B.csproj", "{05D71C15-8820-4FBC-8579-676950DF8BBB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{747FCAFF-0366-4841-A431-32A457162C2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{747FCAFF-0366-4841-A431-32A457162C2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{747FCAFF-0366-4841-A431-32A457162C2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{747FCAFF-0366-4841-A431-32A457162C2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D71C15-8820-4FBC-8579-676950DF8BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D71C15-8820-4FBC-8579-676950DF8BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D71C15-8820-4FBC-8579-676950DF8BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D71C15-8820-4FBC-8579-676950DF8BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0E5B380-0D26-4149-A130-25413B848E7A}
+	EndGlobalSection
+EndGlobal
