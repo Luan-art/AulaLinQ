@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ProjAula1B;
+using System.Text.Json.Nodes;
 
 var lst = ReadFile.GetData("C:\\Users\\LuanLF\\motoristas_habilitados.json");
 
@@ -25,17 +26,26 @@ Console.WriteLine("ordenar pela Razão Social");
 Console.WriteLine("Inserir todos os Registors no SQL Server\n");
 
  
-if (TestFilters.AddSQLbd(lst))
+/*if (TestFilters.AddSQLbd(lst))
 {
     Console.WriteLine("Adicionado");
 }
 else
 {
   Console.WriteLine("Erro ao adicionar");
-}
+}*/
  
 Console.WriteLine("Gerar XML");
 
-
-
 //Console.WriteLine(TestFilters.GenerateXML(lst)); 
+
+List<PenalidadesAplicadas> pA = TestFilters.ExtractDataFromSQL();
+
+if (TestFilters.AddMongobd(pA))
+{
+    Console.WriteLine("Adicionado");
+}
+else
+{
+    Console.WriteLine("Erro ao adicionar");
+}
