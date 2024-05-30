@@ -26,26 +26,26 @@ Console.WriteLine("ordenar pela Razão Social");
 Console.WriteLine("Inserir todos os Registors no SQL Server\n");
 
  
-/*if (TestFilters.AddSQLbd(lst))
+if (TestFilters.AddSQLbd(lst))
 {
     Console.WriteLine("Adicionado");
 }
 else
 {
   Console.WriteLine("Erro ao adicionar");
-}*/
+}
  
 Console.WriteLine("Gerar XML");
 
 //Console.WriteLine(TestFilters.GenerateXML(lst)); 
 
-List<PenalidadesAplicadas> pA = TestFilters.ExtractDataFromSQL();
+//List<PenalidadesAplicadas> pA = TestFilters.ExtractDataFromSQL();
 
-if (TestFilters.AddMongobd(pA))
+/*if (TestFilters.AddMongobd(pA))
 {
     Console.WriteLine("Adicionado");
 }
 else
 {
     Console.WriteLine("Erro ao adicionar");
-}
+}*/

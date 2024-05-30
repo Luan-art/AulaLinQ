@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -109,39 +110,69 @@ namespace ProjAula1B
             bool isConect = false;
             Banco conn = new Banco();
             SqlConnection conexaosql = new SqlConnection(conn.Caminho());
-            conexaosql.Open();
-
-            foreach (PenalidadesAplicadas p in records)
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+            try
             {
-                try
+                conexaosql.Open();
+                isConect = true;
+
+                int count = records.Count;
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conexaosql;
+
+                for (int i = 0; i <= (int)Math.Floor((double)records.Count / 1000); i++)
                 {
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.CommandText = "INSERT INTO PenalidadesAplicadas (razaoSocial, cnpj, cpf, vigenciaDoCadastro) VALUES (@razaoSocial, @cnpj, @cpf, @vigenciaDoCadastro);";
+                    string insert = "INSERT INTO PenalidadesAplicadas (razaoSocial, cnpj, cpf, vigenciaDoCadastro) VALUES ";
 
-                    cmd.Parameters.Add("@razaoSocial", System.Data.SqlDbType.VarChar, 50).Value = p.RazaoSocial;
-                    cmd.Parameters.Add("@cnpj", System.Data.SqlDbType.VarChar, 18).Value = p.Cnpj;
-                    cmd.Parameters.Add("@cpf", System.Data.SqlDbType.VarChar, 14).Value = p.Cpf;
-                    cmd.Parameters.Add("@vigenciaDoCadastro", System.Data.SqlDbType.Date).Value = p.VigenciaCadastro;
+                    foreach (var item in records.Skip(1000 * i).Take(1000))
+                    {
+                        if (item.Cpf != null)
+                        {
+                            insert += $"('{item.RazaoSocial.Replace("'", "''")}', " +
+                                      $"'{item.Cnpj}', " +
+                                      $"'{item.Cpf}', " +
+                                      $"'{item.VigenciaCadastro:yyyy-MM-dd}'),";
+                        }
+                    }
 
-                    cmd.Connection = conexaosql;
-                    cmd.ExecuteNonQuery();
+                    if (insert.EndsWith(","))
+                    {
+                        insert = insert.Substring(0, insert.Length - 1);  
+                        cmd.CommandText = insert;
 
-                    isConect = true;
-
+                        try
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                        catch (SqlException e)
+                        {
+                            Console.WriteLine($"--ERRO AO INSERIR QUERY SQL:\n" +
+                                              $"cod.: {e.ErrorCode}\n" +
+                                              $"msg: {e.Message}\n");
+                            return false;
+                        }
+                    }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"--ERRO AO CONECTAR AO BANCO DE DADOS:\n" +
+                                  $"msg: {e.Message}\n");
+                return false;
+            }
+            finally
+            {
+                if (conexaosql.State == System.Data.ConnectionState.Open)
                 {
-                    Console.WriteLine("Erro ao conectar com o banco");
-                    Console.WriteLine(ex.Message);
-                    break;
+                    conexaosql.Close();
                 }
-
             }
 
-            conexaosql.Close();
+            watch.Stop();
+            Console.WriteLine($"Levou {watch.ElapsedMilliseconds} milissegundos!");
 
-            return isConect;
-
+            return true;
         }
 
         internal static bool AddMongobd(List<PenalidadesAplicadas> pA)
@@ -149,13 +180,15 @@ namespace ProjAula1B
             try
             {
                 MongoDB conn = new MongoDB();
-                var client = new MongoClient(conn.Caminho());
-                var database = client.GetDatabase("PenalidadesAplicadas"); 
+                MongoClient client = new MongoClient(conn.Caminho());
+                var database = client.GetDatabase("PenalidadesAplicadas");
                 var collection = database.GetCollection<BsonDocument>("penalidades");
+
+                List<BsonDocument> documents = new List<BsonDocument>();
 
                 foreach (var record in pA)
                 {
-                    var document = new BsonDocument
+                    BsonDocument document = new BsonDocument
                     {
                         { "razaoSocial", record.RazaoSocial },
                         { "cnpj", record.Cnpj },
@@ -163,9 +196,9 @@ namespace ProjAula1B
                         { "vigenciaDoCadastro", record.VigenciaCadastro }
                     };
 
-                    collection.InsertOne(document);
+                    documents.Add(document);
                 }
-
+                collection.InsertMany(documents);
 
                 InsertMetadata("Sucesso", DateTime.Now, pA.Count);
 
@@ -178,7 +211,7 @@ namespace ProjAula1B
             }
         }
 
-        private static void InsertMetadata(string desc, DateTime data, int number )
+        private static void InsertMetadata(string desc, DateTime data, int number)
         {
             Banco conn = new Banco();
             SqlConnection conexaosql = new SqlConnection(conn.Caminho());
